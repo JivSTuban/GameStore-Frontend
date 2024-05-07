@@ -2,16 +2,11 @@
 
 namespace GameStore.Frontend.Clients;
 
-public class GenresClient
+public class GenresClient(HttpClient httpClient)
 {
-    private readonly Genre[] genres = [
-        new(){
-            Id = 1,
-            Name = "Fighting"
-        }
-    ];
 
-    public Genre[] GetGenres() => genres;
+
+    public async Task<Genre[]> GetGenresAsync() => await httpClient.GetFromJsonAsync<Genre[]>("genres") ?? throw new Exception("Genre not found ><");
 
   
 }

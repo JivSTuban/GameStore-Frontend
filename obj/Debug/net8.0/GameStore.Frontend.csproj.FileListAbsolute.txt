@@ -26,3 +26,4 @@ C:\Users\JivSTuban\Desktop\GameStore FullStack\GameStore.Frontend\obj\Debug\net8
 C:\Users\JivSTuban\Desktop\GameStore FullStack\GameStore.Frontend\obj\Debug\net8.0\GameStore.Frontend.pdb
 C:\Users\JivSTuban\Desktop\GameStore FullStack\GameStore.Frontend\obj\Debug\net8.0\GameStore.Frontend.genruntimeconfig.cache
 C:\Users\JivSTuban\Desktop\GameStore FullStack\GameStore.Frontend\obj\Debug\net8.0\ref\GameStore.Frontend.dll
+C:\Users\JivSTuban\Desktop\GameStore FullStack\GameStore.Frontend\obj\Debug\net8.0\GameStore.Frontend.sourcelink.json

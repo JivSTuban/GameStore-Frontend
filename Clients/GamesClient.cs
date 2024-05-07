@@ -2,33 +2,14 @@
 
 namespace GameStore.Frontend.Clients;
 
-public class GamesClient
+public class GamesClient(HttpClient httpClient)
 {
-    private readonly List<GameSummary> games = [
-        new (){
-            Id = 1,
-            Name = "Street Fighter II",
-            Genre = "Fighting",
-            Price = 19.99M,
-            ReleaseDate = new DateOnly(1992,7,12),
-        }
-    ];
+    public async Task<GameSummary[]> GetGamesAsync() => await httpClient.GetFromJsonAsync<GameSummary[]>("games") ?? [];
 
-    private readonly Genre[] genres = new GenresClient().GetGenres();
+    public async Task AddGameAsync(GameDetails game) => await httpClient.PostAsJsonAsync("games", game);
 
-    public GameSummary[] GetGames() => [..games];
+    public async Task<GameDetails> GetGameDetailsAsync(int id) => await httpClient.GetFromJsonAsync<GameDetails>($"games/{id}") ?? throw new Exception("Game not found ><");
+    public async Task UpdateGameAsync(GameDetails updatedGame) => await httpClient.PutAsJsonAsync($"games/{updatedGame.Id}", updatedGame);
 
-    public void AddGame(GameDetails game){
-        ArgumentException.ThrowIfNullOrWhiteSpace(game.GenreId);
-        var genre = genres.Single(genre => genre.Id == int.Parse(game.GenreId));
-        var gameSummary = new GameSummary
-        {
-            Id = games.Count+1,
-            Name = game.Name,
-            Genre = genre.Name,
-            Price = game.Price,
-            ReleaseDate = game.ReleaseDate,
-        };
-        games.Add(gameSummary);
-    }
+    public async Task DeleteGameAsync(int id) => await httpClient.DeleteAsync($"games/{id}");
 }

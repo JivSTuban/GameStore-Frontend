@@ -1,11 +1,21 @@
+using GameStore.Frontend.Clients;
 using GameStore.Frontend.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+var gameStoreUrl = builder.Configuration["GameStoreUrl"] ??
+    throw new Exception("GameStoreApiUrl is not set."); 
+
+builder.Services.AddHttpClient<GamesClient>(
+    client => client.BaseAddress = new Uri(gameStoreUrl));
+builder.Services.AddHttpClient<GenresClient>(
+    client => client.BaseAddress = new Uri(gameStoreUrl));
+
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -20,6 +30,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>();
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 app.Run();

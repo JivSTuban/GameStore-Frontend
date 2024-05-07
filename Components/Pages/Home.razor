@@ -1,28 +1,33 @@
 ﻿@using GameStore.Frontend.Clients
-
+@inject GamesClient GamesClient
 
 @page "/"
 
 <PageTitle>Game Catalog</PageTitle>
+
+<div class="mt-2">
+    <a href="/editgame" class="btn btn-primary" role="button">New Game</a>
+</div>
 
 @if(games is null){
     <div><em>Loading ...</em></div>
 }else{
     <table class="table table-striped table-bordered table-hover mt-3">
         <thead class="table-dark">
-            <tr>
-                <th >Id</th>
+            <tr class="text-center">
+                <th>Id</th>
                 <th>Name</th>
                 <th>Genre</th>
                 <th>Price</th>
                 <th>Release Date</th>
-                <th></th>
+                <th>Edit Game</th>
+                <th>Delete Game</th>
             </tr>
         </thead>
     <tbody>
         @foreach (var game in games)
         {
-            <tr>
+            <tr class="text-center my-auto">
                 <td >@game.Id</td>
                 <td>@game.Name</td>
                 <td>@game.Genre</td>
@@ -30,8 +35,14 @@
                 <td>@game.ReleaseDate</td>
                 <td>
                     <div class="d-flex justify-content-center">
-                        <a href=""><i class="bi bi-pencil mx-2"></i></a>
+                            <a role="button" class="btn btn-primary" href="/editgame/@game.Id"><i class="bi bi-pencil-fill"></i></a>
                     </div>
+                </td>
+                <td>
+                    <div class="d-flex justify-content-center" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(game)">
+                        <button class="btn btn-danger" href="/editgame/@game.Id"><i class="bi bi-trash-fill"></i></button>
+                    </div>
+                    <DeleteGame Game="@game"/>
                 </td>
             </tr>
         }
@@ -40,12 +51,15 @@
 }
 
 @code{
-    private GamesClient client = new();
 
     private GameSummary[]? games;
 
-    protected override void OnInitialized(){
-        games = client.GetGames();
+    protected override async Task OnInitializedAsync(){
+        games = await GamesClient.GetGamesAsync();
+    }
+
+    private string GetDeleteModalId(GameSummary game){
+        return $"#{DeleteGame.GetModalId(game)}";
     }
 }   
  

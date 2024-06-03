@@ -1,0 +1,48 @@
+POST http://localhost:5016/register
+Content-Type: application/json
+
+{
+    "email": "aldrinjohn@gmail.com",
+    "password": "Ajohn12?"
+}
+
+###
+POST http://localhost:5016/login?useCookies=true
+Content-Type: application/json
+
+{
+    "email": "aldrinjohn@gmail.com",
+    "password": "Ajohn12?",
+    "twoFactorCode": "string",
+    "twoFactorRecoveryCode": "string"
+}
+###
+POST http://localhost:5016/register
+Content-Type: application/json
+
+{
+    "email": "jivtuban14@gmail.com",
+    "password": "Jiv12345?"
+}
+
+###
+POST http://localhost:5016/login?useCookies=true
+Content-Type: application/json
+
+{
+    "email": "jivtuban14@gmail.com",
+    "password": "Jiv12345?",
+    "twoFactorCode": "string",
+    "twoFactorRecoveryCode": "string"
+}
+
+
+###
+POST  http://localhost:5016/logout
+Content-Type: application/json
+
+{
+}
+
+###
+GET  http://localhost:5016/games/10

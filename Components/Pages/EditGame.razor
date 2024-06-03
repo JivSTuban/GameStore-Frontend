@@ -1,27 +1,53 @@
 ﻿@page "/editgame"
 @page "/editgame/{id:int}"
 @rendermode InteractiveServer
-
+@inject IConfiguration config
+@inject IWebHostEnvironment environment
 @inject NavigationManager NavigationManager
 @inject GamesClient GamesClient
 @inject GenresClient GenresClient
 
 
-<PageTitle>Edit game</PageTitle>
+@if (id is null)
+{
+    <PageTitle>Add Game</PageTitle>
+}
+else
+{
+    <PageTitle>Edit Game</PageTitle>
+}
 
 @if (genres is null || game is null) {
     <p><em>Loading...</em></p>
 }else{
-    <h3>Editing @game.Name</h3>
-    <div class="row">
-        <div class="col-md-4">  
-            <EditForm Model="game" FormName="EditGame" OnValidSubmit="HandleSubmitAsync">
+    <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-md-4">
+            @if (id is null)
+            {
+                <h3 class="mb-5">Adding Game</h3>
+            }
+            else
+            {
+                <h3 class="mb-5">Editing @game.Name</h3>
+            }
+            <EditForm Model="game" FormName="EditGame" OnValidSubmit="HandleSubmitAsync" Enhance>
                 <DataAnnotationsValidator/>
+                <div class="mb-3">
+                    <label for="filepath" class="form-label">Photo:</label>
+                    @if (!string.IsNullOrEmpty(imageData))
+                    {
+                        <img src="@imageData" width="400" class="img-fluid mb-3" />
+                    }
+                    else if (id is not null && game.FileName is not null)
+                    {
+                        <img src="@Path.Combine(config.GetValue<string>("WebStorageRoot")!,game.FileName)" width="400" class="img-fluid mb-3" />
+                    }
+                    <InputFile id="filepath" class="form-control" OnChange="@LoadFile" accept=".png,.jpg,.jpeg" />`
+                </div>
                 <div class="mb-3">
                     <label for="name" class="form-label">Name:</label>
                     <InputText id="name" @bind-Value="game.Name" class="form-control"/>
                     <ValidationMessage For="()=> game.Name"/>
-                    
                 </div>
                 <div class="mb-3">
                     <label for="genre" class="form-label">Genre:</label>
@@ -45,21 +71,96 @@
                     <ValidationMessage For="()=> game.ReleaseDate" />
                 </div>
                 <div class="mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <InputTextArea id="description" @bind-Value="game.Description" class="form-control" />
+                    <ValidationMessage For="()=> game.Description" />
+                </div>
+                <div class="mb-3">
                     <button type="submit" class="btn btn-primary">Submit</button>
                     <a role="button" class="btn btn-danger" href="/">Cancel</a>
                 </div>
             </EditForm>
+           
+            @if (errors.Count > 0)
+            {
+                <h2 class="mb-3">Errors</h2>
+                <ul class="text-danger">
+                    @foreach (var error in errors)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            }
+
         </div>
     </div>
+  
 }
 
 @code {
-
     [Parameter]
     public int? id { get; set; }
 
     [SupplyParameterFromForm]
     private GameDetails? game {get; set;}
+
+    private long maxFileSize = 1024 * 1024 * 3;
+    private List<string> errors = new();
+    private IBrowserFile? file;
+    string? previousFilePath;
+    string? imageData;
+
+
+    public string GetPreviousFilePath()
+    {
+        ArgumentNullException.ThrowIfNull(game?.FileName);
+        return Path.Combine(config.GetValue
+        <string>("FileStorage")!, game.FileName);
+    }
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        file = e.File;
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(memoryStream);
+        var bytes = memoryStream.ToArray();
+        var base64 = Convert.ToBase64String(bytes);
+        imageData = $"data:{file.ContentType};base64,{base64}";
+ 
+    }
+
+    private async Task<string> CaptureFile()
+    {
+        if (file is null)
+        {
+            return "";
+        }
+        try
+        {
+
+            string newFileName = Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(file.Name));
+
+            string fileStoragePath = Path.Combine(environment.ContentRootPath, config.GetValue<string>("FileStorage")!);
+
+            string path = Path.Combine(fileStoragePath, "games", newFileName);
+
+            string relativePath = Path.Combine("games", newFileName);
+
+            Directory.CreateDirectory(Path.Combine(fileStoragePath, "games"));
+
+            await using FileStream fs = new(path, FileMode.Create);
+
+            await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+
+            return relativePath;
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"File {file.Name} Error: {ex.Message}");
+            throw;
+        }
+
+    }
+
 
     protected override async Task OnParametersSetAsync()
     {
@@ -70,7 +171,7 @@
 
         if (id is not null)
         {
-           game = await GamesClient.GetGameDetailsAsync(id.Value);
+            game = await GamesClient.GetGameDetailsAsync(id.Value);
         }
         else
         {
@@ -88,19 +189,36 @@
         genres = await GenresClient.GetGenresAsync();
     }
 
-    private async Task HandleSubmitAsync(){
-        ArgumentNullException.ThrowIfNull(game);
-        if (id is null)
+    private async Task HandleSubmitAsync()
+    {
+        
+        try
         {
-            await GamesClient.AddGameAsync(game);  
-        }
-        else
-        {
-            game.Id = id.Value;
-            await GamesClient.UpdateGameAsync(game);
-        }
+            if (id is null)
+            {
+                ArgumentNullException.ThrowIfNull(game);
+                string relativePath = await CaptureFile();
+                game.FileName = relativePath;
+                await GamesClient.AddGameAsync(game);
+            }
+            else
+            {
+                previousFilePath = GetPreviousFilePath();
+                ArgumentNullException.ThrowIfNull(game);
+                string relativePath = await CaptureFile();
+                game.FileName = relativePath;
+                File.Delete(previousFilePath!);
+                game.Id = id.Value;
 
-        NavigationManager.NavigateTo("/");
+                await GamesClient.UpdateGameAsync(game);
+            }
+
+            NavigationManager.NavigateTo("/gamecatalog");
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"Error: {ex.Message}");
+        }
     }
 }
 

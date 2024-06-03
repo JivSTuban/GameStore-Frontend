@@ -1,5 +1,8 @@
 using GameStore.Frontend.Clients;
 using GameStore.Frontend.Components;
+using GameStore.Frontend.Identity;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +13,21 @@ var gameStoreUrl = builder.Configuration["GameStoreUrl"] ??
 
 builder.Services.AddHttpClient<GamesClient>(
     client => client.BaseAddress = new Uri(gameStoreUrl));
+
 builder.Services.AddHttpClient<GenresClient>(
     client => client.BaseAddress = new Uri(gameStoreUrl));
+
+builder.Services.AddHttpClient<UsersClient>(
+    client => client.BaseAddress = new Uri(gameStoreUrl));
+
+builder.Services.AddTransient<CookieHandler>();
+
+builder.Services.AddAuthorizationCore();
+
+builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStateProvider>();
+builder.Services.AddScoped(
+    sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
+
 
 
 var app = builder.Build();
@@ -28,6 +44,12 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(Directory.GetCurrentDirectory(), "Temp", "Storage", "games")),
+    RequestPath = "/Temp/Storage/games"
+});
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();

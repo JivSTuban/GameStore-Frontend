@@ -12,4 +12,6 @@ public class GamesClient(HttpClient httpClient)
     public async Task UpdateGameAsync(GameDetails updatedGame) => await httpClient.PutAsJsonAsync($"games/{updatedGame.Id}", updatedGame);
 
     public async Task DeleteGameAsync(int id) => await httpClient.DeleteAsync($"games/{id}");
+
+
 }

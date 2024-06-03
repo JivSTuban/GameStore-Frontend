@@ -1,65 +1,77 @@
-﻿@using GameStore.Frontend.Clients
-@inject GamesClient GamesClient
-
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject UsersClient UsersClient
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@rendermode InteractiveServer
 @page "/"
 
-<PageTitle>Game Catalog</PageTitle>
 
-<div class="mt-2">
-    <a href="/editgame" class="btn btn-primary" role="button">New Game</a>
-</div>
+<PageTitle>Login</PageTitle>
+@if (userDetails is null)
+{
+    <h1><em>Loading...</em></h1>
+}
+else
+{
+    <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-md-4">
 
-@if(games is null){
-    <div><em>Loading ...</em></div>
-}else{
-    <table class="table table-striped table-bordered table-hover mt-3">
-        <thead class="table-dark">
-            <tr class="text-center">
-                <th>Id</th>
-                <th>Name</th>
-                <th>Genre</th>
-                <th>Price</th>
-                <th>Release Date</th>
-                <th>Edit Game</th>
-                <th>Delete Game</th>
-            </tr>
-        </thead>
-    <tbody>
-        @foreach (var game in games)
-        {
-            <tr class="text-center my-auto">
-                <td >@game.Id</td>
-                <td>@game.Name</td>
-                <td>@game.Genre</td>
-                <td>@game.Price.ToString("C2")</td>
-                <td>@game.ReleaseDate</td>
-                <td>
-                    <div class="d-flex justify-content-center">
-                            <a role="button" class="btn btn-primary" href="/editgame/@game.Id"><i class="bi bi-pencil-fill"></i></a>
-                    </div>
-                </td>
-                <td>
-                    <div class="d-flex justify-content-center" data-bs-toggle="modal" data-bs-target="@GetDeleteModalId(game)">
-                        <button class="btn btn-danger" href="/editgame/@game.Id"><i class="bi bi-trash-fill"></i></button>
-                    </div>
-                    <DeleteGame Game="@game"/>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+            <EditForm Model="userDetails" OnValidSubmit="HandleSubmitAsync" FormName="Home" Enhance>
+                <DataAnnotationsValidator />
+
+                <div class="form-group my-3">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <InputText type="email" @bind-Value="userDetails.Email" class="form-control" placeholder="Enter email" />
+                    <ValidationMessage For="@(() => userDetails.Email)" />
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+
+                <div class="form-group my-3">
+                    <label for="exampleInputPassword1">Password</label>
+                    <InputText type="password" @bind-Value="userDetails.Password" class="form-control" placeholder="Password" />
+                    <ValidationMessage For="@(() => userDetails.Password)" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </EditForm>
+            @if (!string.IsNullOrEmpty(loginError))
+            {
+                <div class="alert alert-danger" role="alert">
+                    @loginError
+                </div>
+            }
+        </div>
+    </div>
 }
 
 @code{
+    [SupplyParameterFromForm]
+    private UserDetails? userDetails { get; set; }
+    private string? loginError;
 
-    private GameSummary[]? games;
+    protected override void OnInitialized()
+    {
+        userDetails = new UserDetails
+            {
+                Email = string.Empty,
+                Password = string.Empty
+            };
 
-    protected override async Task OnInitializedAsync(){
-        games = await GamesClient.GetGamesAsync();
     }
 
-    private string GetDeleteModalId(GameSummary game){
-        return $"#{DeleteGame.GetModalId(game)}";
+    private async Task HandleSubmitAsync()
+    {
+        var response = await UsersClient.LoginUser(userDetails!);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/gamecatalog");
+        }
+        else
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            loginError = $"Login failed: {response.StatusCode} - {errorContent}";
+        }
     }
+
 }   
  

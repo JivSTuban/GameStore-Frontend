@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "DAYqwtDqI6ypZZw+Er/zXhw6iMGtaBoumu58a0m6LkbC9LP1EONdtxHUbHh22L3Nw2rctnA6AuFZeCnP5ymGUg==",
+  "dgSpecHash": "DvRCGnrtoDRnWpY9cIYx/q+eFasDKqr5uVfdYcKiVq7BlWznk9oTQDhiGIXAmgNM1B+GuJ/YsqdK0gj2FV2zPg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\GameStore.Frontend.csproj",
+  "projectFilePath": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\GameStore.Frontend.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

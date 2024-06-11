@@ -1,6 +1,5 @@
 using GameStore.Frontend.Clients;
 using GameStore.Frontend.Components;
-using GameStore.Frontend.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.FileProviders;
 
@@ -20,13 +19,8 @@ builder.Services.AddHttpClient<GenresClient>(
 builder.Services.AddHttpClient<UsersClient>(
     client => client.BaseAddress = new Uri(gameStoreUrl));
 
-builder.Services.AddTransient<CookieHandler>();
 
 builder.Services.AddAuthorizationCore();
-
-builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStateProvider>();
-builder.Services.AddScoped(
-    sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
 
 
 

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "SRG50ewefjbnmV/m9E5WUKH9oHLyH7JsEajAoJj8ubs=",
+  "Hash": "Bq7LAqDrk1MM2IwM8HRC9okbomycDHisFPiuC4dCzjo=",
   "Source": "GameStore.Frontend",
   "BasePath": "_content/GameStore.Frontend",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "GameStore.Frontend\\wwwroot",
       "Source": "GameStore.Frontend",
-      "ContentRoot": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\wwwroot\\",
       "BasePath": "_content/GameStore.Frontend",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\obj\\Debug\\net8.0\\scopedcss\\bundle\\GameStore.Frontend.styles.css",
+      "Identity": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\obj\\Debug\\net8.0\\scopedcss\\bundle\\GameStore.Frontend.styles.css",
       "SourceId": "GameStore.Frontend",
       "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
+      "ContentRoot": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
       "BasePath": "_content/GameStore.Frontend",
       "RelativePath": "GameStore.Frontend.styles.css",
       "AssetKind": "All",
@@ -33,13 +33,13 @@
       "AssetTraitValue": "ApplicationBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\obj\\Debug\\net8.0\\scopedcss\\bundle\\GameStore.Frontend.styles.css"
+      "OriginalItemSpec": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\obj\\Debug\\net8.0\\scopedcss\\bundle\\GameStore.Frontend.styles.css"
     },
     {
-      "Identity": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\GameStore.Frontend.bundle.scp.css",
+      "Identity": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\GameStore.Frontend.bundle.scp.css",
       "SourceId": "GameStore.Frontend",
       "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\",
+      "ContentRoot": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\",
       "BasePath": "_content/GameStore.Frontend",
       "RelativePath": "GameStore.Frontend.bundle.scp.css",
       "AssetKind": "All",
@@ -52,13 +52,13 @@
       "AssetTraitValue": "ProjectBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\GameStore.Frontend.bundle.scp.css"
+      "OriginalItemSpec": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\GameStore.Frontend.bundle.scp.css"
     },
     {
-      "Identity": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\wwwroot\\app.css",
+      "Identity": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\wwwroot\\app.css",
       "SourceId": "GameStore.Frontend",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\wwwroot\\",
       "BasePath": "_content/GameStore.Frontend",
       "RelativePath": "app.css",
       "AssetKind": "All",

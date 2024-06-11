@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\GameStore.Frontend.csproj",
+      "projectUniqueName": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\GameStore.Frontend.csproj",
       "projectName": "GameStore.Frontend",
-      "projectPath": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\GameStore.Frontend.csproj",
+      "projectPath": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\GameStore.Frontend.csproj",
       "packagesPath": "C:\\Users\\JivSTuban\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\JivSTuban\\Desktop\\GameStore FullStack\\GameStore.Frontend\\obj\\",
+      "outputPath": "C:\\Users\\JivSTuban\\Desktop\\GameStore-Frontend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\JivSTuban\\AppData\\Roaming\\NuGet\\NuGet.Config",

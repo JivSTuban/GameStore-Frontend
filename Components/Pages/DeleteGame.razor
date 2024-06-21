@@ -1,0 +1,58 @@
+﻿@inject NavigationManager NavigationManager
+@inject IConfiguration config
+@inject GamesClient GamesClient
+
+@rendermode InteractiveServer
+
+<div class="modal fade" id="@GetModalId(Game)" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">@Title?</h5>
+        
+      </div>
+        <div class="modal-body">
+                @if (FilePath != null)
+                {
+                    <img src="@Path.Combine(config.GetValue<string>("WebStorageRoot")!, FilePath)" class="img-fluid" width="400" />
+                }
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" @onclick="@ConfirmAsync" data-bs-dismiss="modal">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+    [Parameter]
+    public GameSummary? Game {get; set;}
+
+
+    public string? Title { get; set; }
+
+    public string? FilePath { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        Title = $"Delete {Game?.Name}";
+        FilePath = Game?.FileName;
+
+    }
+
+    public static string GetModalId(GameSummary? game){
+        ArgumentNullException.ThrowIfNull(game);
+        return $"deleteModal-{game.Id}";
+    }
+
+    private async Task ConfirmAsync()
+    {
+        ArgumentNullException.ThrowIfNull(Game!.FileName);
+        File.Delete(Path.Combine(config.GetValue
+        <string>("FileStorage")!, Game.FileName));
+        await GamesClient.DeleteGameAsync(Game!.Id);
+        NavigationManager.Refresh();
+    }
+
+}

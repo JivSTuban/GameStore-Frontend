@@ -7,7 +7,11 @@
 @inject GamesClient GamesClient
 @inject GenresClient GenresClient
 
-
+/*
+    Check if the id parameter is being sent in the url.
+    If the client is not sending an id then he is trying to create a new game detail.
+    Otherwise, he is trying to edit a game.
+*/
 @if (id is null)
 {
     <PageTitle>Add Game</PageTitle>
@@ -16,12 +20,18 @@ else
 {
     <PageTitle>Edit Game</PageTitle>
 }
-
+/*
+    Check if either genres or game is null.
+    The game can be null in the database, but the genres cannot.
+    Here I am just trying to check if either of the two has been loaded from the OnParametersSetAsync() or OnInitializedAsync().
+    If the game is null, or the client is not sending an id, I will initialize a GameDetail instance.
+*/ 
 @if (genres is null || game is null) {
     <p><em>Loading...</em></p>
 }else{
     <div class="row d-flex justify-content-center align-items-center">
         <div class="col-md-4">
+            //  Title
             @if (id is null)
             {
                 <h3 class="mb-5">Adding Game</h3>
@@ -30,23 +40,43 @@ else
             {
                 <h3 class="mb-5">Editing @game.Name</h3>
             }
+            /*
+                This editform populates the GameDetails intance called game
+                when the user submits valid data.
+            */
             <EditForm Model="game" FormName="EditGame" OnValidSubmit="HandleSubmitAsync" Enhance>
                 <DataAnnotationsValidator/>
                 <div class="mb-3">
                     <label for="filepath" class="form-label">Photo:</label>
+                    /*
+                        Check if the client has changed the photo or added a photo to the InputFile element.
+                        Let him preview the photo he chose.
+                    */
                     @if (!string.IsNullOrEmpty(imageData))
                     {
                         <img src="@imageData" width="400" class="img-fluid mb-3" />
                     }
+                    /*
+                        Show the photo of the game that the client is currently editing
+                    */
                     else if (id is not null && game.FileName is not null)
                     {
-                        <img src="@Path.Combine(config.GetValue<string>("WebStorageRoot")!,game.FileName)" width="400" class="img-fluid mb-3" />
+                        <img src="@GetFileWebPath(game)" width="400" class="img-fluid mb-3" />
                     }
+                    /*
+                        This element is where the client will add or change the game's photo.
+                        When the client adds/changes a photo the LoadFile method will be triggered.
+                        It will collect the event file and store it in the imageData variable,
+                        and when the imageData already has a value, it will be loaded above.
+                    */
                     <InputFile id="filepath" class="form-control" OnChange="@LoadFile" accept=".png,.jpg,.jpeg" />
                 </div>
 
                 <div class="mb-3">
                     <label for="name" class="form-label">Name:</label>
+                    /*
+                        Input field for the game's name
+                    */
                     <InputText id="name" @bind-Value="game.Name" class="form-control"/>
                     <ValidationMessage For="()=> game.Name"/>
                 </div>
@@ -54,8 +84,16 @@ else
                     <label for="genre" class="form-label">Genre:</label>
                     <InputSelect id="genre" @bind-Value="game.GenreId" class="form-select">
                         <option value="">Select a genre</option>
+                        /*
+                            Loop through all the genres store on the Genres array instance
+                            which was instanciated on the OnInitializedAsync function.
+                        */
                         @foreach (var genre in genres)
                         {
+                            /*
+                                The client will choose a genre name and the corresponding Id of that
+                                genre will be stored  in the game.GenreId.
+                            */
                             <option value="@genre.Id">@genre.Name</option>
                         }
                     </InputSelect>
@@ -78,10 +116,16 @@ else
                 </div>
                 <div class="mb-3">
                     <button type="submit" class="btn btn-primary">Submit</button>
+                    /*
+                        If the client does not want to add or change this game,
+                        pressing this button will lead him back to the gamecatalog page
+                    */
                     <a role="button" class="btn btn-danger" href="/gamecatalog">Cancel</a>
                 </div>
             </EditForm>
-           
+           /*
+                Show the errors to the client if there are any.
+           */
             @if (errors.Count > 0)
             {
                 <h2 class="mb-3">Errors</h2>
@@ -112,12 +156,13 @@ else
     string? imageData;
     Boolean photoChanged;
 
+    public string GetFileWebPath(GameDetails game){
+        return Path.Combine(config.GetValue<string>("WebStorageRoot")!,game.FileName!);
+    }
 
-    public string GetPreviousFilePath()
+    public string GetFilePath(GameDetails game)
     {
-        ArgumentNullException.ThrowIfNull(game?.FileName);
-        return Path.Combine(config.GetValue
-        <string>("FileStorage")!, game.FileName);
+        return Path.Combine(config.GetValue<string>("FileStorage")!, game.FileName!);
     }
     private async Task LoadFile(InputFileChangeEventArgs e)
     {   
@@ -197,25 +242,20 @@ else
 
         try
         {
-            if (id is null)
+            if (id is null && game is not null)
             {
-                ArgumentNullException.ThrowIfNull(game);
                 string relativePath = await CaptureFile();
                 game.FileName = relativePath;
                 await GamesClient.AddGameAsync(game);
             }
-            else
+            else if(id is not null && game is not null)
             {
-
                 if (photoChanged.Equals(true))
                 {
-                    previousFilePath = GetPreviousFilePath();
-                    ArgumentNullException.ThrowIfNull(game);
+                    File.Delete(GetFilePath(game));
                     string relativePath = await CaptureFile();
                     game.FileName = relativePath;
-                    File.Delete(previousFilePath!);
                 }
-                
                 game.Id = id.Value;
                 await GamesClient.UpdateGameAsync(game);
             }
